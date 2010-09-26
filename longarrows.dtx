@@ -1,0 +1,566 @@
+% \iffalse meta-comment
+% Copyright (C) 2008, 2010 by Philipp Stephani <st_philipp@yahoo.de>
+%
+% This file may be distributed and/or modified under the conditions of the
+% LaTeX Project Public License, either version 1.3c of this license or (at your
+% option) any later version. The latest version of this license is in
+%
+%     http://www.latex-project.org/lppl.txt
+%
+% and version 1.3c or later is part of all distributions of LaTeX version
+% 2005/12/01 or later.
+% \fi
+%
+% \iffalse
+%<*driver>
+\documentclass[a4paper, 10pt, pdftex]{phst-doc}
+
+\usepackage{lipsum}
+\usepackage{siunitx}
+\usepackage{mflogo}
+\usepackage[overwrite=false]{longarrows}
+
+\newcommand*\packagename{\textsf{longarrows}\xspace}
+
+\EnableCrossrefs         
+\CodelineIndex
+\RecordChanges
+
+\setlipsumdefault{1-2}
+
+\newcommand*\TODO{\begin{color}{red}\lipsum\end{color}}
+
+\newcommand*\mytabularskip{\vspace{0.8ex plus 0.8ex minus 0.3ex}}
+\newenvironment{mytabular}{\mytabularskip\noindent\tabular}{\endtabular\mytabularskip}
+
+\newcommand*\GreekLetter[1]{%
+  \texttt{\string#1} & $\mathupgreek{#1}$ & $\mathnormal{#1}$%
+}
+
+\setlength\overfullrule{5pt}
+
+\NewDocumentCommand\arrow{m}{{\large$#1$}}
+\DeclareSIUnit{\point}{pt}
+\DeclareSIUnit{\mathunit}{mu}
+
+\begin{document}
+    \DocInput{longarrows.dtx}
+    \PrintChanges
+    \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{v0.1}{2008/05/04}{Initial version}
+% \changes{v0.2}{2010/09/26}{Various updates}
+%
+% \GetFileInfo{longarrows.sty}
+%
+%
+% \DeleteShortVerb{\|}
+% \MakeShortVerb{\"}
+%
+% \title{The \packagename package\thanks{This document corresponds to
+% \packagename \fileversion, dated \filedate.}}
+%
+% \author{Philipp Stephani \\ \texttt{st\_philipp@yahoo.de}}
+%
+% \maketitle
+%
+% \tableofcontents
+% \listoftables
+% \listoffigures
+%
+%
+% \section{Introduction}
+%
+% In standard \LaTeX\ the long double arrows $\Longleftarrow$
+% (\cmd{\Longleftarrow}) and $\Longrightarrow$ (\cmd{\Longrightarrow}) don't
+% look very good if the document font size is larger than \SI{10}{\point}.
+% For an example, look at the left part of \autoref{Test}.
+% This is the (magnified) result of \cmd{\Longrightarrow} in a standard
+% document (using class \cls{article}).
+% You see that the long horizontals bars are broken somewhere in the middle and
+% that they are narrower in the left part of the symbol.
+% This results from the fact that the long arrows are not characters on their
+% own, but rather composed of two symbols.
+% In the case of $\Longleftarrow$ and $\Longrightarrow$ these characters are
+% the equals sign ($=$) and the short double arrows ($\Leftarrow$ and
+% $\Rightarrow$).
+% The equals sign comes from the roman text font family (\eg \fnt{cmr} or
+% \fnt{lmr}), while the short arrows are part of the math symbols font family
+% (\eg \fnt{cmsy} or \fnt{lmsy}).
+% For the Computer Modern and Latin Modern fonts, the roman fonts come in more
+% design sizes than the symbols font families; in particular, the roman fonts
+% are available in \SI{10}{\point}, \SI{11}{\point} and \SI{12}{\point} and
+% several other sizes, while the symbols font families are only available in
+% \SI{10}{\point} and some smaller sizes.
+% As the equals sign and the double arrows are designed to match at the
+% corresponding font sizes, this wouldn't matter if the larger fonts were
+% simply scaled variants of the smaller ones.
+% But this is not the case: the equals sign from a \SI{10}{\point} roman font,
+% if scaled by \SI{120}{\percent}, does not match the equals sign from the
+% coresponding \SI{12}{\point} font.
+% This is the origin of said problem: The short arrows get scaled to the
+% desired size, but the equals sign is taken from an unscaled font.
+% It's not too difficult to imagine that, under these circumstances, the two
+% symbols cannot match.
+%
+% \packagename uses \LaTeX's font selection mechanism to scale the roman font
+% like the symbols font so that the symbols match in every font size.
+% The package detects the presence of \pkg{lmodern} and loads the corrent Latin
+% Modern fonts if this package is loaded; otherwise, the Computer Modern fonts
+% are used.
+% There is no support for other fonts at this so far.
+% The right symbol in \autoref{Test} shows the effect of the new font: The
+% equals sign an the short arrow match perfectly.
+%
+% \begin{docfigure}{Test}{Original result (left) and result with \packagename
+% (right)}
+%   \vspace{12pt}
+%   \scalebox{7}{\arrow{\Longrightarrow \; \nLongrightarrow}}
+% \end{docfigure}
+%
+% This problem doesn't occur for the single long arrows ($\longrightarrow$
+% etc.)\ because the minus sign used to extend these arrows is taken from the
+% math symbols font family.
+%
+% All of the long arrows (single and double) are a bit too long, compared to
+% other mathematical symbols.
+% If requested by a special package option, \packagename reduces the width
+% of these arrows.
+%
+%
+% \section{Interface}
+%
+% \subsection{Package loading and options}
+%
+% Like every package, \packagename can be loaded via the \cmd{\usepackage}
+% command.
+% The general syntax is "\usepackage"\oarg{options}"{longarrows}", where
+% \meta{options} is a comma-separated list of key-value pairs, following the
+% rules of the \pkg{xkeyval} package, \ie each key-value pair is of the form
+% \meta{key}"="\meta{value}.
+%
+% One boolean option "overwrite" is supported.
+% Its allowed values are "true" to enable the corresponding option and
+% "false" to disable it.
+% If only the option name is given, the value "true" is assumed.
+%
+% \begin{itemize}
+%   \item
+%     For each long arrow command, \packagename creates a new command with the
+% same name as the original command, following a prefix "n".
+%     For example, the command \cmd{\nLongrightarrow} is defined to be a
+% corrected version of \cmd{\Longrightarrow}.
+%     The option \opt{overwrite} controls whether the predefined commands are
+% to be overwritten by the newly created commands.
+%     This is usually a good idea as you probably want to use the corrected
+% versions without changing your document.
+%     So this option defaults to "true". The prefixed names are always
+% available, regardless of the value of this option.
+%     If the \opt{overwrite} option is set to "true", the original commands
+% cannot be accessed any more; in addition, the new definitions automatically
+% apply to derived commands like \cmd{\implies}, \cmd{\impliedby} and
+% \cmd{\iff}.
+%   \item
+%     The option \opt{overlap} controls whether the length of the long arrow
+% should be reduced a bit.
+%     The default value is "0mu", which is the original
+% behaviour.
+%     The amount of reducing can be fine-tuned by giving a math length to this option.
+% \end{itemize}
+%
+% \noindent
+% \packagename ckecks if the \pkg{lmodern} package is loaded in order to decide
+% whether the Latin Modern or the Computer Modern fonts are to be used.
+% This check yields only correct results if the \pkg{lmodern}
+% package is loaded before the \packagename package.
+%
+%
+% \subsection{Special parameters}
+%
+% \packagename declares one mathematical skip which is inserted as a kern
+% object between the equals sign (or minus, for single arrows) and the short
+% arrow to join them visually.
+% The standard definitions from \LaTeX\ use here a hard-wired skip of
+% \SI{-3}{\mathunit}.
+% Using \packagename, this skip can be changed via \cmd{\LongArrowsSetup}.
+% The package sets this register to \SI{-3}{\mathunit}, but other assignments like
+% "\LongArrowsSetup{overlap=2mu}" are
+% possible.
+%
+%
+% \subsection{Commands}
+%
+% \DescribeMacro{\nlongleftarrow}
+% \DescribeMacro{\nLongleftarrow}
+% \DescribeMacro{\nlongrightarrow}
+% \DescribeMacro{\nLongrightarrow}
+% \DescribeMacro{\nlongleftrightarrow}
+% \DescribeMacro{\nLongleftrightarrow}
+% The package creates the math mode commands \cs{slong\-left\-arrow},
+% \cs{sLong\-left\-arrow}, \cs{slong\-right\-arrow}, \cs{sLong\-right\-arrow},
+% \cs{slong\-left\-right\-arrow} and \cs{sLong\-left\-right\-arrow} as
+% corrected (and possibly reduced) versions of \cs{long\-left\-arrow},
+% \cs{Long\-left\-arrow}, \cs{long\-right\-arrow}, \cs{Long\-right\-arrow},
+% \cs{long\-left\-right\-arrow} and \cs{Long\-left\-right\-arrow},
+% respectively.
+% If the "overwrite" option is enabled, the original commands are overwritten
+% with these new commands.
+% \autoref{Commands} summarizes all of the newly-created and predefined
+% commands.
+% As this document is set in a \SI{10}{\point} font, we have to manually select
+% a \SI{12}{\point} font (with the \cmd{\large} command) to make the results
+% visible.
+% The same has been done to produce the arrows in \autoref{Test}.
+%
+%
+% \begin{doctable}{Commands}{List of all commands affected by the
+%   package}{@{}cccc@{}}
+%   \tblhead{Old command} & \tblhead{New command} & \tblhead{Old symbol} &
+% \tblhead{New symbol} \\
+%   \midrule
+%   \cmd{\longleftarrow} & \cmd{\nlongleftarrow} & \arrow{\longleftarrow} &
+% \arrow{\nlongleftarrow} \\
+%   \cmd{\Longleftarrow} & \cmd{\nLongleftarrow} & \arrow{\Longleftarrow} &
+% \arrow{\nLongleftarrow} \\
+%   \cmd{\longrightarrow} & \cmd{\nlongrightarrow} & \arrow{\longrightarrow} &
+% \arrow{\nlongrightarrow} \\
+%   \cmd{\Longrightarrow} & \cmd{\nLongrightarrow} & \arrow{\Longrightarrow} &
+% \arrow{\nLongrightarrow} \\
+%   \cmd{\longleftrightarrow} & \cmd{\nlongleftrightarrow} &
+% \arrow{\longleftrightarrow} & \arrow{\nlongleftrightarrow} \\
+%   \cmd{\Longleftrightarrow} & \cmd{\nLongleftrightarrow} &
+% \arrow{\Longleftrightarrow} & \arrow{\nLongleftrightarrow}
+% \end{doctable}
+%
+%
+% \section{Possible issues}
+%
+%     The \packagename packages generates a new symbol font\footnote{Also
+% called ``math group'' or ``math family''.} (not to confuse with the math
+% symbols font family) for the scaled equals sign.
+%     But be aware that at most 16 math symbol fonts can be created in one
+% document.
+%     In complex documents with many different math styles, \LaTeX\ could run
+% out of symbol fonts.
+%     For example, \pkg{amsfonts} requires two symbol fonts, \pkg{bm} up to
+% four.
+%
+%
+%
+% \StopEventually{}
+%
+%
+% \section{Background}
+%
+% The age of \TeX\ shows up here.
+% When Knuth created \TeX, space was a much more delimiting factor than today.
+% Thus, several math symbols like $\Longrightarrow$ or $\mapsto$ are in fact
+% composed of several smaller pieces.
+% If every one of those were a distinct character in some font, the design
+% would me much cleaner.
+% In fact, one of my earlier attempts consisted of creating an additional font
+% by modifying the \MF\ sources, but I have abandoned this for several reasons:
+%
+% \begin{itemize}
+%   \item it is much more low-level than the package approach, and thus more
+% complicated and error-prone;
+%   \item it involves generating Type~1 fonts from the modified \MF\ sources
+% via \tool{mftrace}, which can lead to typographical errors;
+%   \item additional fonts are much harder to distribute than simple packages.
+% \end{itemize}
+%
+% \noindent
+% Hopefully, \TeX\ fonts including long arrows become available one day, which
+% would render this package unnecessary.
+%
+%
+% \section{Implementation}
+%
+% \subsection{Package file}
+% First we load required packages and set up the options.
+%    \begin{macrocode}
+%<*package>
+\NeedsTeXFormat{LaTeX2e}[2009/09/24]
+\RequirePackage{etex}[1998/03/26]
+\RequirePackage{expl3}[2010/07/13]
+\ProvidesExplPackage{longarrows}{2010/09/15}{0.2}%
+  {Better-looking long arrows}
+\RequirePackage{xparse}[2010/05/23]
+\RequirePackage{l3keys2e}[2009/08/24]
+\bool_new:N \l_longarrows_overwrite_bool
+\muskip_new:N \l_longarrows_overlap_muskip
+\keys_define:nn { longarrows } {
+  overwrite .bool_set:N = \l_longarrows_overwrite_bool,
+  overlap   .code:n
+    = \muskip_set:Nn \l_longarrows_overlap_muskip { -3mu - #1 }
+}
+%    \end{macrocode}
+% \begin{macro}{\LongArrowsSetup}
+%    \begin{macrocode}
+\NewDocumentCommand \LongArrowsSetup { m } {
+  \keys_set:nn { longarrows } { #1 }
+}
+%    \end{macrocode}
+% \end{macro}
+%    \begin{macrocode}
+\LongArrowsSetup { overwrite = true, overlap = 0mu }
+\ProcessKeysPackageOptions { longarrows }
+%    \end{macrocode}
+% We distinguish between Latin Modern and Computer Modern.
+% The actual font declaration is done by the font definition files that get
+% loaded automatically when required.
+%    \begin{macrocode}
+\tl_new:N \l_longarrows_font_tl
+\tl_new:N \l_longarrows_temp_tl
+\clist_map_inline:nn { lmr, cmr } {
+  \tl_set:Nx \l_longarrows_temp_tl {
+    \exp_not:n { \getanddefine@fonts \symoperators }
+    \exp_not:c { OT1/ #1 /m/n }
+  }
+%    \end{macrocode}
+% L3: make it clearer that \meta{item} in "\tl_if_in" can contain multiple tokens;
+% actually we need "\tl_if_in:Nx" here
+%    \begin{macrocode}
+  \exp_args:NNo \tl_if_in:NnT \mv@normal \l_longarrows_temp_tl {
+    \tl_set:Nn \l_longarrows_font_tl { #1 longarrows }
+    \clist_map_break:
+  }
+}
+\msg_new:nnn { longarrows } { unknown-font } {
+  Unknown~ font~ detected;~ aborting
+}
+\tl_if_empty:NT \l_longarrows_font_tl {
+  \msg_warning:nn { longarrows } { unknown-font }
+%    \end{macrocode}
+% L3: public interface for \cmd{\endinput}
+%    \begin{macrocode}
+  \tex_endinput:D
+}
+\msg_new:nnn { longarrows } { unknown-def } {
+  Unknown~ definition~ #2~ for~ command~ #1~ detected;~
+  expected:~ #3;~ aborting
+}
+%    \end{macrocode}
+% L3: possibility for strict checking
+%    \begin{macrocode}
+\cs_new_protected_nopar:Nn \longarrows_check_cmd:NNn {
+%    \end{macrocode}
+% L3: "\tl_if_eq:Nn"?
+%    \begin{macrocode}
+  \tl_if_eq:onF #1 { #3 } {
+    \msg_warning:nnxxx { longarrows } { unknown-def }
+      { \token_to_str:N #2 } { \tl_to_str:N #1 } { \tl_to_str:n { #3 } }
+    \tex_endinput:D
+  }
+}
+\cs_generate_variant:Nn \longarrows_check_cmd:NNn { NNx, cNn }
+\cs_new_protected_nopar:Nn \longarrows_check_fragile_cmd:Nn {
+  \longarrows_check_cmd:NNn #1 #1 { #2 }
+}
+\cs_new_protected_nopar:Nn \longarrows_check_robust_cmd:Nn {
+  \longarrows_check_cmd:NNx #1 #1 {
+    \exp_not:N \protect \exp_not:c { \cs_to_str:N #1 ~ }
+  }
+  \longarrows_check_cmd:cNn { \cs_to_str:N #1 ~ } #1 { #2 }
+}
+\longarrows_check_robust_cmd:Nn \joinrel { \mathrel { \mkern -3mu } }
+\@ifpackageloaded { amsmath } {
+  \longarrows_check_fragile_cmd:Nn \Relbar
+    { \mathrel \std@equal }
+  \longarrows_check_fragile_cmd:Nn \longleftarrow
+    { \DOTSB \leftarrow \protect \joinrel \protect \relbar }
+  \longarrows_check_fragile_cmd:Nn \Longleftarrow
+    { \DOTSB \Leftarrow \protect \joinrel \protect \Relbar }
+  \longarrows_check_fragile_cmd:Nn \longrightarrow
+    {  \DOTSB \protect \relbar \protect \joinrel \rightarrow }
+  \longarrows_check_fragile_cmd:Nn \Longrightarrow
+    { \DOTSB \protect \Relbar \protect \joinrel \Rightarrow }
+  \longarrows_check_fragile_cmd:Nn \longleftrightarrow
+    { \DOTSB \leftarrow \joinrel \rightarrow }
+  \longarrows_check_fragile_cmd:Nn \Longleftrightarrow
+    { \DOTSB \Leftarrow \joinrel \Rightarrow }
+} {
+  \longarrows_check_robust_cmd:Nn \Relbar
+    { \mathrel { = } }
+  \longarrows_check_robust_cmd:Nn \longleftarrow
+    {\leftarrow\joinrel\relbar }
+  \longarrows_check_robust_cmd:Nn \Longleftarrow
+    { \Leftarrow \joinrel \Relbar } 
+  \longarrows_check_robust_cmd:Nn \longrightarrow
+    {\relbar\joinrel\rightarrow}
+  \longarrows_check_robust_cmd:Nn \Longrightarrow
+    { \Relbar \joinrel \Rightarrow }
+  \longarrows_check_robust_cmd:Nn \longleftrightarrow
+    { \leftarrow \joinrel \rightarrow }
+  \longarrows_check_robust_cmd:Nn \Longleftrightarrow
+    { \Leftarrow \joinrel \Rightarrow }
+%    \end{macrocode}
+% \begin{macro}{\DOTSB}
+% We take the case that \pkg{amsmath} is not loaded into account.
+% All macros except \cmd{\DOTSB} exist in standard \LaTeX, so we assign
+% \cmd{\DOTSB} only if it is not already assigned.
+% \cmd{\DOTSB} has no real meaning; it is just used as a marker in
+% \pkg{amsmath}.
+%    \begin{macrocode}
+  \cs_new_eq:NN \DOTSB \scan_stop:
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% Now we use \cmd{\DeclareSymbolFont} to either declare or overwrite the symbol
+% font.
+% We also set parameters for the bold version.
+%    \begin{macrocode}
+\DeclareSymbolFont { longarrows }          { OT1 }
+  { \l_longarrows_font_tl } { m  } { n }
+\SetSymbolFont     { longarrows } { bold } { OT1 }
+  { \l_longarrows_font_tl } { bx } { n }
+%    \end{macrocode}
+%
+% \begin{macro}{\longarrowjoinrel}
+% This is like \LaTeXe's \cmd{\joinrel}.
+%    \begin{macrocode}
+\NewDocumentCommand \longarrowjoinrel { } {
+  \tex_mathrel:D { \tex_mkern:D \l_longarrows_overlap_muskip }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\longarrowRelbar}
+% This symbol is used as arrow extender.
+% The definition here is actually simpler than the one in \pkg{amsmath}, but
+% should suffice for our purposes.
+%    \begin{macrocode}
+\chk_if_free_cs:N \longarrowRelbar
+\DeclareMathSymbol
+  { \longarrowRelbar } { \mathrel } { longarrows } { `\= }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\nlongleftarrow}
+% \begin{macro}{\nLongleftarrow}
+% \begin{macro}{\nlongrightarrow}
+% \begin{macro}{\nLongrightarrow}
+% \begin{macro}{\nlongleftrightarrow}
+% \begin{macro}{\nLongleftrightarrow}
+% These definitions are modeled after \pkg{amsmath}, too.
+%    \begin{macrocode}
+\NewDocumentCommand\nlongleftarrow { } {
+  \DOTSB \leftarrow \longarrowjoinrel \relbar
+}
+\NewDocumentCommand \nLongleftarrow { } {
+  \DOTSB \Leftarrow \longarrowjoinrel \longarrowRelbar
+}
+\NewDocumentCommand \nlongrightarrow { } {
+  \DOTSB \relbar \longarrowjoinrel \rightarrow
+}
+\NewDocumentCommand \nLongrightarrow { } {
+  \DOTSB \longarrowRelbar \longarrowjoinrel \Rightarrow
+}
+\NewDocumentCommand \nlongleftrightarrow { } {
+  \DOTSB \leftarrow \longarrowjoinrel \rightarrow
+}
+\NewDocumentCommand \nLongleftrightarrow { } {
+  \DOTSB \Leftarrow \longarrowjoinrel \Rightarrow
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\longleftarrow}
+% \begin{macro}{\Longleftarrow}
+% \begin{macro}{\longrightarrow}
+% \begin{macro}{\Longrightarrow}
+% \begin{macro}{\longleftrightarrow}
+% \begin{macro}{\Longleftrightarrow}
+% If overwriting is requested, do it.
+%    \begin{macrocode}
+\bool_if:NT \l_longarrows_overwrite_bool {
+  \cs_set_eq:NN \longleftarrow      \nlongleftarrow
+  \cs_set_eq:NN \Longleftarrow      \nLongleftarrow
+  \cs_set_eq:NN \longrightarrow     \nlongrightarrow
+  \cs_set_eq:NN \Longrightarrow     \nLongrightarrow
+  \cs_set_eq:NN \longleftrightarrow \nlongleftrightarrow
+  \cs_set_eq:NN \Longleftrightarrow \nLongleftrightarrow
+}
+%</package>
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%
+% \subsection{Font definition files}
+% This is the font definition for the scaled version of \fnt{cmr}.
+% We use the same sizes and creation functions as \fnt{cmsy}.
+% Note that this does not take into account the changes made by \pkg{fix-cm}.
+%    \begin{macrocode}
+%<*cmfont>
+\ProvidesFile{ot1cmrlongarrows.fd}%
+  [2010/09/26 v0.2 Computer Modern Roman scaled]
+\DeclareFontFamily{OT1}{cmrlongarrows}{}
+\DeclareFontShape{OT1}{cmrlongarrows}{m}{n}{%
+  <5><6><7><8><9>gen*cmr%
+  <10><10.95><12><14.4><17.28><20.74><24.88>cmr10%
+}{}
+\DeclareFontShape{OT1}{cmrlongarrows}{bx}{n}{%
+  <5><6><7><8><9>gen*cmbx%
+  <10><10.95><12><14.4><17.28><20.74><24.88>cmbx10%
+}{}
+%</cmfont>
+%    \end{macrocode}
+%
+% This is the font definition for the scaled version of \fnt{lmr}.
+% We use the same sizes and creation functions as \fnt{lmsy}.
+%    \begin{macrocode}
+%<*lmfont>
+\ProvidesFile{ot1lmrlongarrows.fd}%
+  [2010/09/26 v0.2 Latin Modern Roman scaled]
+\DeclareFontFamily{OT1}{lmrlongarrows}{}
+\DeclareFontShape{OT1}{lmrlongarrows}{m}{n}{%
+  <-5.5>rm-lmr5%
+  <5.5-6.5>rm-lmr6%
+  <6.5-7.5>rm-lmr7%
+  <7.5-8.5>rm-lmr8%
+  <8.5-9.5>rm-lmr9%
+  <9.5->rm-lmr10%
+}{}
+\DeclareFontShape{OT1}{lmrlongarrows}{bx}{n}{%
+  <-6>rm-lmbx5%
+  <6-8>rm-lmbx7%
+  <8->rm-lmbx10%
+}{}
+%</lmfont>
+%    \end{macrocode}
+%
+% \Finale
+\endinput
