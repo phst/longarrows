@@ -27,4 +27,4 @@
 
 (defvar LaTeX-longarrows-package-options
   '("overwrite=false" "overwrite=true")
-  "Package options for the etex package.")
+  "Package options for the longarrows package.")
