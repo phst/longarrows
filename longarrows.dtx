@@ -15,7 +15,6 @@
 %<*driver>
 \documentclass[a4paper, 10pt, pdftex]{phst-doc}
 
-\usepackage{lipsum}
 \usepackage{siunitx}
 \usepackage{mflogo}
 \usepackage[overwrite=false]{longarrows}
@@ -25,17 +24,6 @@
 \EnableCrossrefs         
 \CodelineIndex
 \RecordChanges
-
-\setlipsumdefault{1-2}
-
-\newcommand*\TODO{\begin{color}{red}\lipsum\end{color}}
-
-\newcommand*\mytabularskip{\vspace{0.8ex plus 0.8ex minus 0.3ex}}
-\newenvironment{mytabular}{\mytabularskip\noindent\tabular}{\endtabular\mytabularskip}
-
-\newcommand*\GreekLetter[1]{%
-  \texttt{\string#1} & $\mathupgreek{#1}$ & $\mathnormal{#1}$%
-}
 
 \setlength\overfullrule{5pt}
 
@@ -76,11 +64,7 @@
 % \GetFileInfo{longarrows.sty}
 %
 %
-% \DeleteShortVerb{\|}
-% \MakeShortVerb{\"}
-%
-% \title{The \packagename package\thanks{This document corresponds to
-% \packagename \fileversion, dated \filedate.}}
+% \title{The \packagename package\thanks{This document corresponds to \packagename \fileversion, dated \filedate.}}
 %
 % \author{Philipp Stephani \\ \texttt{st\_philipp@yahoo.de}}
 %
