@@ -460,7 +460,7 @@
   \longarrows_check_fragile_cmd:Nn \Longleftarrow
     { \DOTSB \Leftarrow \protect \joinrel \protect \Relbar }
   \longarrows_check_fragile_cmd:Nn \longrightarrow
-    {  \DOTSB \protect \relbar \protect \joinrel \rightarrow }
+    { \DOTSB \protect \relbar \protect \joinrel \rightarrow }
   \longarrows_check_fragile_cmd:Nn \Longrightarrow
     { \DOTSB \protect \Relbar \protect \joinrel \Rightarrow }
   \longarrows_check_fragile_cmd:Nn \longleftrightarrow
@@ -471,11 +471,11 @@
   \longarrows_check_robust_cmd:Nn \Relbar
     { \mathrel { = } }
   \longarrows_check_robust_cmd:Nn \longleftarrow
-    {\leftarrow\joinrel\relbar }
+    { \leftarrow \joinrel \relbar }
   \longarrows_check_robust_cmd:Nn \Longleftarrow
     { \Leftarrow \joinrel \Relbar } 
   \longarrows_check_robust_cmd:Nn \longrightarrow
-    {\relbar\joinrel\rightarrow}
+    { \relbar\joinrel\rightarrow }
   \longarrows_check_robust_cmd:Nn \Longrightarrow
     { \Relbar \joinrel \Rightarrow }
   \longarrows_check_robust_cmd:Nn \longleftrightarrow
@@ -528,7 +528,7 @@
 % \begin{macro}{\nlongleftarrow}
 % These definitions are modeled after \pkg{amsmath}, too.
 %    \begin{macrocode}
-\NewDocumentCommand\nlongleftarrow { } {
+\NewDocumentCommand \nlongleftarrow { } {
   \DOTSB \leftarrow \longarrowjoinrel \relbar
 }
 %    \end{macrocode}
@@ -616,6 +616,7 @@
 %
 %
 % \subsection{Font definition files}
+%
 % This is the font definition for the scaled version of \fnt{cmr}.
 % We use the same sizes and creation functions as \fnt{cmsy}.
 % Note that this does not take into account the changes made by \pkg{fix-cm}.
