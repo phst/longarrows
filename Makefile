@@ -18,7 +18,8 @@ destdir := $(texmf)/tex/$(branch)
 docdir := $(texmf)/doc/$(branch)
 auctexdir := ~/.emacs.d/auctex/style
 
-LATEXFLAGS := --file-line-error --interaction=scrollmode
+TEXFLAGS := --file-line-error --interaction=scrollmode
+LATEXFLAGS := $(TEXFLAGS)
 LATEXFLAGS_DRAFT := $(LATEXFLAGS) --draftmode
 LATEXFLAGS_FINAL := $(LATEXFLAGS) --synctex=1
 
@@ -66,8 +67,8 @@ install-pdf: pdf
 
 install-complete: install install-pdf
 
-$(destination): $(source) $(driver)
-	$(TEX) $(driver)
+$(destination) $(cmfont) $(lmfont): $(driver) $(source)
+	$(TEX) $(TEXFLAGS) $<
 
 $(manual): $(source) $(destination)
 	$(LATEX) $(LATEXFLAGS_DRAFT) $(source)
