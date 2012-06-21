@@ -509,7 +509,7 @@
 % This is like \LaTeXe's \cmd{\joinrel}.
 %    \begin{macrocode}
 \NewDocumentCommand \longarrowjoinrel { } {
-  \tex_mathrel:D { \tex_mkern:D \l_longarrows_overlap_muskip }
+  \mathrel { \mkern \l_longarrows_overlap_muskip }
 }
 %    \end{macrocode}
 % \end{macro}
