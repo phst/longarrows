@@ -79,47 +79,40 @@
 %
 % In standard \LaTeX\ the long double arrows $\Longleftarrow$
 % (\cmd{\Longleftarrow}) and $\Longrightarrow$ (\cmd{\Longrightarrow}) don't
-% look very good if the document font size is larger than \SI{10}{\point}.
-% For an example, look at the left part of \autoref{Test}.
-% This is the (magnified) result of \cmd{\Longrightarrow} in a standard
-% document (using class \cls{article}).
-% You see that the long horizontals bars are broken somewhere in the middle and
-% that they are narrower in the left part of the symbol.
+% look very good if the document font size is larger than \SI{10}{\point}.  For
+% an example, look at the left part of \autoref{Test}.  This is the (magnified)
+% result of \cmd{\Longrightarrow} in a standard document (using class
+% \cls{article}).  You see that the long horizontals bars are broken somewhere
+% in the middle and that they are narrower in the left part of the symbol.
 % This results from the fact that the long arrows are not characters on their
-% own, but rather composed of two symbols.
-% In the case of $\Longleftarrow$ and $\Longrightarrow$ these characters are
-% the equals sign ($=$) and the short double arrows ($\Leftarrow$ and
-% $\Rightarrow$).
-% The equals sign comes from the roman text font family (\eg \fnt{cmr} or
-% \fnt{lmr}), while the short arrows are part of the math symbols font family
-% (\eg \fnt{cmsy} or \fnt{lmsy}).
-% For the Computer Modern and Latin Modern fonts, the roman fonts come in more
-% design sizes than the symbols font families; in particular, the roman fonts
-% are available in \SI{10}{\point}, \SI{11}{\point} and \SI{12}{\point} and
-% several other sizes, while the symbols font families are only available in
-% \SI{10}{\point} and some smaller sizes.
-% As the equals sign and the double arrows are designed to match at the
-% corresponding font sizes, this wouldn't matter if the larger fonts were
-% simply scaled variants of the smaller ones.
-% But this is not the case: the equals sign from a \SI{10}{\point} roman font,
-% if scaled by \SI{120}{\percent}, does not match the equals sign from the
-% coresponding \SI{12}{\point} font.
-% This is the origin of said problem: The short arrows get scaled to the
-% desired size, but the equals sign is taken from an unscaled font.
-% It's not too difficult to imagine that, under these circumstances, the two
-% symbols cannot match.
+% own, but rather composed of two symbols.  In the case of $\Longleftarrow$ and
+% $\Longrightarrow$ these characters are the equals sign ($=$) and the short
+% double arrows ($\Leftarrow$ and $\Rightarrow$).  The equals sign comes from
+% the roman text font family (\eg \fnt{cmr} or \fnt{lmr}), while the short
+% arrows are part of the math symbols font family (\eg \fnt{cmsy} or
+% \fnt{lmsy}).  For the Computer Modern and Latin Modern fonts, the roman fonts
+% come in more design sizes than the symbols font families; in particular, the
+% roman fonts are available in \SI{10}{\point}, \SI{11}{\point} and
+% \SI{12}{\point} and several other sizes, while the symbols font families are
+% only available in \SI{10}{\point} and some smaller sizes.  As the equals sign
+% and the double arrows are designed to match at the corresponding font sizes,
+% this wouldn't matter if the larger fonts were simply scaled variants of the
+% smaller ones.  But this is not the case: the equals sign from a
+% \SI{10}{\point} roman font, if scaled by \SI{120}{\percent}, does not match
+% the equals sign from the coresponding \SI{12}{\point} font.  This is the
+% origin of said problem: The short arrows get scaled to the desired size, but
+% the equals sign is taken from an unscaled font.  It's not too difficult to
+% imagine that, under these circumstances, the two symbols cannot match.
 %
 % \packagename uses \LaTeX's font selection mechanism to scale the roman font
-% like the symbols font so that the symbols match in every font size.
-% The package detects the presence of \pkg{lmodern} and loads the corrent Latin
+% like the symbols font so that the symbols match in every font size.  The
+% package detects the presence of \pkg{lmodern} and loads the corrent Latin
 % Modern fonts if this package is loaded; otherwise, the Computer Modern fonts
-% are used.
-% There is no support for other fonts at this so far.
-% The right symbol in \autoref{Test} shows the effect of the new font: The
-% equals sign an the short arrow match perfectly.
+% are used.  There is no support for other fonts at this so far.  The right
+% symbol in \autoref{Test} shows the effect of the new font: The equals sign an
+% the short arrow match perfectly.
 %
-% \begin{docfigure}{Test}{Original result (left) and result with \packagename
-% (right)}
+% \begin{docfigure}{Test}{Original result (left) and result with \packagename (right)}
 %   \vspace{12pt}
 %   \scalebox{7}{\arrow{\Longrightarrow \; \nLongrightarrow}}
 % \end{docfigure}
@@ -129,9 +122,8 @@
 % math symbols font family.
 %
 % All of the long arrows (single and double) are a bit too long, compared to
-% other mathematical symbols.
-% If requested by a special package option, \packagename reduces the width
-% of these arrows.
+% other mathematical symbols.  If requested by a special package option,
+% \packagename reduces the width of these arrows.
 %
 %
 % \section{Interface}
@@ -139,59 +131,57 @@
 % \subsection{Package loading and options}
 %
 % Like every package, \packagename can be loaded via the \cmd{\usepackage}
-% command.
-% The general syntax is "\usepackage"\oarg{options}"{longarrows}", where
-% \meta{options} is a comma-separated list of key-value pairs, following the
-% rules of the \pkg{xkeyval} package, \ie each key-value pair is of the form
-% \meta{key}"="\meta{value}.
+% command.  The general syntax is |\usepackage|\oarg{options}|{longarrows}|,
+% where \meta{options} is a comma-separated list of key-value pairs, following
+% the rules of the \pkg{xkeyval} package, \ie each key-value pair is of the
+% form \meta{key}|=|\meta{value}.
 %
-% One boolean option "overwrite" is supported.
-% Its allowed values are "true" to enable the corresponding option and
-% "false" to disable it.
-% If only the option name is given, the value "true" is assumed.
+% One boolean option |overwrite| is supported.  Its allowed values are |true|
+% to enable the corresponding option and |false| to disable it.  If only the
+% option name is given, the value |true| is assumed.
 %
 % \begin{itemize}
-%   \item
-%     For each long arrow command, \packagename creates a new command with the
-% same name as the original command, following a prefix "n".
-%     For example, the command \cmd{\nLongrightarrow} is defined to be a
-% corrected version of \cmd{\Longrightarrow}.
-%     The option \opt{overwrite} controls whether the predefined commands are
-% to be overwritten by the newly created commands.
-%     This is usually a good idea as you probably want to use the corrected
-% versions without changing your document.
-%     So this option defaults to "true". The prefixed names are always
-% available, regardless of the value of this option.
-%     If the \opt{overwrite} option is set to "true", the original commands
-% cannot be accessed any more; in addition, the new definitions automatically
-% apply to derived commands like \cmd{\implies}, \cmd{\impliedby} and
-% \cmd{\iff}.
-%   \item
-%     The option \opt{overlap} controls whether the length of the long arrow
-% should be reduced a bit.
-%     The default value is "0mu", which is the original
-% behaviour.
-%     The amount of reducing can be fine-tuned by giving a math length to this option.
+% \item For each long arrow command, \packagename creates a new command with
+%   the same name as the original command, following a prefix |n|.  For
+%   example, the command \cmd{\nLongrightarrow} is defined to be a corrected
+%   version of \cmd{\Longrightarrow}.  The option \opt{overwrite} controls
+%   whether the predefined commands are to be overwritten by the newly created
+%   commands.  This is usually a good idea as you probably want to use the
+%   corrected versions without changing your document.  So this option defaults
+%   to |true|. The prefixed names are always available, regardless of the value
+%   of this option.  If the \opt{overwrite} option is set to |true|, the
+%   original commands cannot be accessed any more; in addition, the new
+%   definitions automatically apply to derived commands like \cmd{\implies},
+%   \cmd{\impliedby} and \cmd{\iff}.
+% \item The option \opt{overlap} controls whether the length of the long arrow
+%   should be reduced a bit.  The default value is |0mu|, which enables the
+%   original behaviour.  The amount of reducing can be fine-tuned by giving a
+%   math length to this option.
 % \end{itemize}
 %
 % \noindent
-% \packagename ckecks if the \pkg{lmodern} package is loaded in order to decide
-% whether the Latin Modern or the Computer Modern fonts are to be used.
-% This check yields only correct results if the \pkg{lmodern}
-% package is loaded before the \packagename package.
+% \packagename attempts to ckeck whether the Latin Modern or the Computer
+% Modern fonts are to be used.  This check yields only correct results if the
+% \pkg{lmodern} package is loaded before the \packagename package.  Other fonts
+% are not supported since they usually contain dedicated glyphs for the long
+% arrows.
+%
+% The \packagename package supports both the definitions from the \pkg{amsmath}
+% package as well as those from the \LaTeXe\ kernel; other packages that change
+% the arrow commands are not supported.  If you want to use \pkg{amsmath}, load
+% it before \packagename.
 %
 %
 % \subsection{Special parameters}
 %
 % \packagename declares one mathematical skip which is inserted as a kern
 % object between the equals sign (or minus, for single arrows) and the short
-% arrow to join them visually.
-% The standard definitions from \LaTeX\ use here a hard-wired skip of
-% \SI{-3}{\mathunit}.
-% Using \packagename, this skip can be changed via \cmd{\LongArrowsSetup}.
-% The package sets this register to \SI{-3}{\mathunit}, but other assignments like
-% "\LongArrowsSetup{overlap=2mu}" are
-% possible.
+% arrow to join them visually.  The standard definitions from \LaTeX\ use here
+% a hard-wired skip of \SI{-3}{\mathunit}.  Using \packagename, this skip can
+% be changed via \cmd{\LongArrowsSetup}.  The package sets this register to
+% \SI{-3}{\mathunit}, but other assignments like
+% |\LongArrowsSetup{overlap=2mu}| are possible.  The value given has the same
+% meaning as the value of the \opt{overlap} option described above.
 %
 %
 % \subsection{Commands}
@@ -208,49 +198,34 @@
 % corrected (and possibly reduced) versions of \cs{long\-left\-arrow},
 % \cs{Long\-left\-arrow}, \cs{long\-right\-arrow}, \cs{Long\-right\-arrow},
 % \cs{long\-left\-right\-arrow} and \cs{Long\-left\-right\-arrow},
-% respectively.
-% If the "overwrite" option is enabled, the original commands are overwritten
-% with these new commands.
-% \autoref{Commands} summarizes all of the newly-created and predefined
-% commands.
-% As this document is set in a \SI{10}{\point} font, we have to manually select
-% a \SI{12}{\point} font (with the \cmd{\large} command) to make the results
-% visible.
-% The same has been done to produce the arrows in \autoref{Test}.
+% respectively.  If the |overwrite| option is enabled, the original commands
+% are overwritten with these new commands.  \autoref{Commands} summarizes all
+% of the newly-created and predefined commands.  As this document is set in a
+% \SI{10}{\point} font, we have to manually select a \SI{12}{\point} font (with
+% the \cmd{\large} command) to make the results visible.  The same has been
+% done to produce the arrows in \autoref{Test}.
 %
 %
-% \begin{doctable}{Commands}{List of all commands affected by the
-%   package}{@{}cccc@{}}
-%   \tblhead{Old command} & \tblhead{New command} & \tblhead{Old symbol} &
-% \tblhead{New symbol} \\
+% \begin{doctable}{Commands}{List of all commands affected by the package}{@{}cccc@{}}
+%   \tblhead{Old command}     & \tblhead{New command}      & \tblhead{Old symbol}        & \tblhead{New symbol}         \\
 %   \midrule
-%   \cmd{\longleftarrow} & \cmd{\nlongleftarrow} & \arrow{\longleftarrow} &
-% \arrow{\nlongleftarrow} \\
-%   \cmd{\Longleftarrow} & \cmd{\nLongleftarrow} & \arrow{\Longleftarrow} &
-% \arrow{\nLongleftarrow} \\
-%   \cmd{\longrightarrow} & \cmd{\nlongrightarrow} & \arrow{\longrightarrow} &
-% \arrow{\nlongrightarrow} \\
-%   \cmd{\Longrightarrow} & \cmd{\nLongrightarrow} & \arrow{\Longrightarrow} &
-% \arrow{\nLongrightarrow} \\
-%   \cmd{\longleftrightarrow} & \cmd{\nlongleftrightarrow} &
-% \arrow{\longleftrightarrow} & \arrow{\nlongleftrightarrow} \\
-%   \cmd{\Longleftrightarrow} & \cmd{\nLongleftrightarrow} &
-% \arrow{\Longleftrightarrow} & \arrow{\nLongleftrightarrow}
+%   \cmd{\longleftarrow}      & \cmd{\nlongleftarrow}      & \arrow{\longleftarrow}      & \arrow{\nlongleftarrow}      \\
+%   \cmd{\Longleftarrow}      & \cmd{\nLongleftarrow}      & \arrow{\Longleftarrow}      & \arrow{\nLongleftarrow}      \\
+%   \cmd{\longrightarrow}     & \cmd{\nlongrightarrow}     & \arrow{\longrightarrow}     & \arrow{\nlongrightarrow}     \\
+%   \cmd{\Longrightarrow}     & \cmd{\nLongrightarrow}     & \arrow{\Longrightarrow}     & \arrow{\nLongrightarrow}     \\
+%   \cmd{\longleftrightarrow} & \cmd{\nlongleftrightarrow} & \arrow{\longleftrightarrow} & \arrow{\nlongleftrightarrow} \\
+%   \cmd{\Longleftrightarrow} & \cmd{\nLongleftrightarrow} & \arrow{\Longleftrightarrow} & \arrow{\nLongleftrightarrow}
 % \end{doctable}
 %
 %
 % \section{Possible issues}
 %
-%     The \packagename packages generates a new symbol font\footnote{Also
-% called ``math group'' or ``math family''.} (not to confuse with the math
-% symbols font family) for the scaled equals sign.
-%     But be aware that at most 16 math symbol fonts can be created in one
-% document.
-%     In complex documents with many different math styles, \LaTeX\ could run
-% out of symbol fonts.
-%     For example, \pkg{amsfonts} requires two symbol fonts, \pkg{bm} up to
-% four.
-%
+% The \packagename packages generates a new symbol font\footnote{Also called
+% ``math group'' or ``math family''.} (not to confuse with the math symbols
+% font family) for the scaled equals sign.  But be aware that at most 16 math
+% symbol fonts can be created in one document.  In complex documents with many
+% different math styles, \LaTeX\ could run out of symbol fonts.  For example,
+% \pkg{amsfonts} requires two symbol fonts, \pkg{bm} up to four.
 %
 %
 % \StopEventually{}
@@ -258,21 +233,20 @@
 %
 % \section{Background}
 %
-% The age of \TeX\ shows up here.
-% When Knuth created \TeX, space was a much more delimiting factor than today.
-% Thus, several math symbols like $\Longrightarrow$ or $\mapsto$ are in fact
-% composed of several smaller pieces.
-% If every one of those were a distinct character in some font, the design
-% would me much cleaner.
-% In fact, one of my earlier attempts consisted of creating an additional font
-% by modifying the \MF\ sources, but I have abandoned this for several reasons:
+% The age of \TeX\ shows up here.  When Knuth created \TeX, space was a much
+% more delimiting factor than today.  Thus, several math symbols like
+% $\Longrightarrow$ or $\mapsto$ are in fact composed of several smaller
+% pieces.  If every one of those were a distinct character in some font, the
+% design would me much cleaner.  In fact, one of my earlier attempts consisted
+% of creating an additional font by modifying the \MF\ sources, but I have
+% abandoned this for several reasons:
 %
 % \begin{itemize}
-%   \item it is much more low-level than the package approach, and thus more
-% complicated and error-prone;
-%   \item it involves generating Type~1 fonts from the modified \MF\ sources
-% via \tool{mftrace}, which can lead to typographical errors;
-%   \item additional fonts are much harder to distribute than simple packages.
+% \item it is much more low-level than the package approach, and thus more
+%   complicated and error-prone;
+% \item it involves generating Type~1 fonts from the modified \MF\ sources via
+%   \tool{mftrace}, which can lead to typographical errors;
+% \item additional fonts are much harder to distribute than simple packages.
 % \end{itemize}
 %
 % \noindent
