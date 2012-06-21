@@ -368,6 +368,8 @@
 %    \begin{macrocode}
 \tl_if_empty:NT \l_longarrows_font_tl {
   \msg_warning:nn { longarrows } { unknown-font }
+  \endinput
+}
 %    \end{macrocode}
 %
 % \subsubsection{Checking}
@@ -377,8 +379,6 @@
 % \begin{l3message}{unknown-def}
 %   This message is issued when an unknown definition of a macro is detected.
 %    \begin{macrocode}
-  \tex_endinput:D
-}
 \msg_new:nnn { longarrows } { unknown-def } {
   Unknown~ definition~ #2~ for~ command~ #1~ detected;~
   expected:~ #3;~ aborting
@@ -405,7 +405,7 @@
   \tl_if_eq:onF #1 { #3 } {
     \msg_warning:nnxxx { longarrows } { unknown-def }
       { \token_to_str:N #2 } { \tl_to_str:N #1 } { \tl_to_str:n { #3 } }
-    \tex_endinput:D
+    \endinput
   }
 }
 %    \end{macrocode}
