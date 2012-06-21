@@ -402,6 +402,7 @@
 %   containing the name of the \meta{visible macro} is printed and the package
 %   loading is aborted.
 %    \begin{macrocode}
+\cs_new_protected_nopar:Nn \longarrows_check_cmd:NNn {
   \tl_if_eq:onF #1 { #3 } {
     \msg_warning:nnxxx { longarrows } { unknown-def }
       { \token_to_str:N #2 } { \tl_to_str:N #1 } { \tl_to_str:n { #3 } }
