@@ -71,7 +71,7 @@ $(destination) $(cmfont) $(lmfont): $(driver) $(source)
 	$(TEX) $(TEXFLAGS) $<
 
 $(manual): $(source) $(destination)
-	$(LATEX) $(LATEXFLAGS_DRAFT) $(source)
+	$(LATEX) $(LATEXFLAGS_DRAFT) $<
 	$(MAKEINDEX) -s $(index_sty) -o $(index_dest) -t $(index_log) $(index_src)
 	$(MAKEINDEX) -s $(changes_sty) -o $(changes_dest) -t $(changes_log) $(changes_src)
 	$(LATEX) $(LATEXFLAGS_DRAFT) $<
