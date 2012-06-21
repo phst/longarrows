@@ -1,0 +1,17 @@
+This work consists of the non-derived files
+
+README
+README.rst
+MANIFEST
+Makefile
+longarrows.dtx
+longarrows.ins
+longarrows.el
+
+and the derived files
+
+longarrows.sty
+lualatex-math.lua
+ot1cmrlongarrows.fd
+ot1lmrlongarrows.fd
+longarrows.pdf
