@@ -329,16 +329,28 @@
 %   definition in the math version selector.
 %    \begin{macrocode}
 \tl_new:N \l_longarrows_temp_tl
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tl_if_in:NoT}
+%   The macro |\tl_if_in:NoT|\meta{token list variable}\meta{item list
+%   macro}\marg{true code} executes \meta{true code} if the expansion of
+%   \meta{item list macro} is contained in the \meta{token list variable}.
+%    \begin{macrocode}
+\cs_generate_variant:Nn \tl_if_in:NnT { No }
+%    \end{macrocode}
+% \end{macro}
+% \LaTeX\ defines the math version selector |\mv@normal| as a hook containing
+% code such as |\getanddefine@fonts\symoperators\OT1/cmr/m/n|, which we exploit
+% to check for the font in use for math operators.  Latin Modern in tested
+% first, then Computer Modern.
+%    \begin{macrocode}
 \clist_map_inline:nn { lmr, cmr } {
   \tl_set:Nx \l_longarrows_temp_tl {
     \exp_not:n { \getanddefine@fonts \symoperators }
     \exp_not:c { OT1/ #1 /m/n }
   }
-%    \end{macrocode}
-% L3: make it clearer that \meta{item} in "\tl_if_in" can contain multiple tokens;
-% actually we need "\tl_if_in:Nx" here
-%    \begin{macrocode}
-  \exp_args:NNo \tl_if_in:NnT \mv@normal \l_longarrows_temp_tl {
+  \tl_if_in:NoT \mv@normal \l_longarrows_temp_tl {
     \tl_set:Nn \l_longarrows_font_tl { #1 longarrows }
     \clist_map_break:
   }
