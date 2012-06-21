@@ -186,15 +186,14 @@
 %
 % \subsection{Commands}
 %
-% \DescribeMacro{\nlongleftarrow}
-% \DescribeMacro{\nLongleftarrow}
-% \DescribeMacro{\nlongrightarrow}
-% \DescribeMacro{\nLongrightarrow}
-% \DescribeMacro{\nlongleftrightarrow}
-% \DescribeMacro{\nLongleftrightarrow}
-% The package creates the math mode commands \cs{slong\-left\-arrow},
-% \cs{sLong\-left\-arrow}, \cs{slong\-right\-arrow}, \cs{sLong\-right\-arrow},
-% \cs{slong\-left\-right\-arrow} and \cs{sLong\-left\-right\-arrow} as
+% \DescribeMacros{^^A
+%   \nlongleftarrow\nLongleftarrow
+%   \nlongrightarrow\nLongrightarrow
+%   \nlongleftrightarrow\nLongleftrightarrow
+% }
+% The package creates the math mode commands \cs{nlong\-left\-arrow},
+% \cs{nLong\-left\-arrow}, \cs{nlong\-right\-arrow}, \cs{nLong\-right\-arrow},
+% \cs{nlong\-left\-right\-arrow} and \cs{nLong\-left\-right\-arrow} as
 % corrected (and possibly reduced) versions of \cs{long\-left\-arrow},
 % \cs{Long\-left\-arrow}, \cs{long\-right\-arrow}, \cs{Long\-right\-arrow},
 % \cs{long\-left\-right\-arrow} and \cs{Long\-left\-right\-arrow},
@@ -257,7 +256,10 @@
 % \section{Implementation}
 %
 % \subsection{Package file}
-% First we load required packages and set up the options.
+%
+% \subsubsection{Initialization}
+%
+% First we load required packages.
 %    \begin{macrocode}
 %<*package>
 \NeedsTeXFormat{LaTeX2e}[2009/09/24]
@@ -266,31 +268,66 @@
 \ProvidesExplPackage{longarrows}{2010/09/15}{0.2}%
   {Better-looking long arrows}
 \RequirePackage{xparse}[2010/05/23]
-\RequirePackage{l3keys2e}[2009/08/24]
+\RequirePackage{l3keys2e}[2010/10/13]
+%    \end{macrocode}
+%
+% \subsubsection{Option processing}
+%
+% \begin{macro}{\l_longarrows_overwrite_bool}
+% \begin{macro}{\l_longarrows_overlap_muskip}
+%   Two variables to store package/setup options.
+%    \begin{macrocode}
 \bool_new:N \l_longarrows_overwrite_bool
 \muskip_new:N \l_longarrows_overlap_muskip
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{option}{overwrite}
+% \begin{option}{overlap}
+%   The two options \opt{overwrite} and \opt{overlap} are declared.
+%    \begin{macrocode}
 \keys_define:nn { longarrows } {
   overwrite .bool_set:N = \l_longarrows_overwrite_bool,
   overlap   .code:n
     = \muskip_set:Nn \l_longarrows_overlap_muskip { -3mu - #1 }
 }
 %    \end{macrocode}
+% \end{option}
+% \end{option}
+%
 % \begin{macro}{\LongArrowsSetup}
+%   This user-level command can be used to change the options defined above.
 %    \begin{macrocode}
 \NewDocumentCommand \LongArrowsSetup { m } {
   \keys_set:nn { longarrows } { #1 }
 }
 %    \end{macrocode}
 % \end{macro}
+% We set the default values for the options and parse them.
 %    \begin{macrocode}
 \LongArrowsSetup { overwrite = true, overlap = 0mu }
 \ProcessKeysPackageOptions { longarrows }
 %    \end{macrocode}
+%
+% \subsubsection{Detecting the font in use}
+%
 % We distinguish between Latin Modern and Computer Modern.
 % The actual font declaration is done by the font definition files that get
 % loaded automatically when required.
+%
+% \begin{macro}{\l_longarrows_font_tl}
+%   This token list contains the NFSS\,2 family name of the font to be used
+%   (\fnt{cmrlongarrows} or \fnt{lmrlongarrows})
 %    \begin{macrocode}
 \tl_new:N \l_longarrows_font_tl
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l_longarrows_temp_tl}
+%   A temporary token list containing the tokens that make up the font
+%   definition in the math version selector.
+%    \begin{macrocode}
 \tl_new:N \l_longarrows_temp_tl
 \clist_map_inline:nn { lmr, cmr } {
   \tl_set:Nx \l_longarrows_temp_tl {
@@ -306,13 +343,27 @@
     \clist_map_break:
   }
 }
+%    \end{macrocode}
+% \begin{l3message}{unknown-font}
+%   This message is issued if no known font was detected.
+%    \begin{macrocode}
 \msg_new:nnn { longarrows } { unknown-font } {
   Unknown~ font~ detected;~ aborting
 }
+%    \end{macrocode}
+% \end{l3message}
+% If |\l_longarrows_font_tl| is still empty, we abort.
+%    \begin{macrocode}
 \tl_if_empty:NT \l_longarrows_font_tl {
   \msg_warning:nn { longarrows } { unknown-font }
 %    \end{macrocode}
-% L3: public interface for \cmd{\endinput}
+%
+% \subsubsection{Checking}
+%
+% The code in this subsection belongs in a separate checking package.
+%
+% \begin{l3message}{unknown-def}
+%   This message is issued when an unknown definition of a macro is detected.
 %    \begin{macrocode}
   \tex_endinput:D
 }
@@ -321,11 +372,23 @@
   expected:~ #3;~ aborting
 }
 %    \end{macrocode}
-% L3: possibility for strict checking
+% \end{l3message}
+%
+% \begin{macro}{\tl_if_eq:onF}
+%   We need a variant of |\tl_if_eq:nn| that expands its first argument once.
+%   This variant was once present in \pkg{expl3}, but has disappeared since
+%   then.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Nn \longarrows_check_cmd:NNn {
+\cs_generate_variant:Nn \tl_if_eq:nnF { o }
 %    \end{macrocode}
-% L3: "\tl_if_eq:Nn"?
+% \end{macro}
+%
+% \begin{macro}{\longarrows_check_cmd:NNn}
+%   The macro |\longarrows_check_cmd:NNn|\meta{actual macro}\meta{visible
+%   macro}\marg{replacement text} checks whether the \meta{actual macro} has
+%   the intended \meta{replacement text}.  Otherwise, a warning message
+%   containing the name of the \meta{visible macro} is printed and the package
+%   loading is aborted.
 %    \begin{macrocode}
   \tl_if_eq:onF #1 { #3 } {
     \msg_warning:nnxxx { longarrows } { unknown-def }
@@ -333,16 +396,48 @@
     \tex_endinput:D
   }
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\longarrows_check_cmd:NNx}
+% \begin{macro}{\longarrows_check_cmd:cNn}
+%   We generate a few variants for argument expansion.
+%    \begin{macrocode}
 \cs_generate_variant:Nn \longarrows_check_cmd:NNn { NNx, cNn }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\longarrows_check_fragile_cmd:Nn}
+%   The macro |\longarrows_check_fragile_cmd:Nn|\meta{macro}\marg{replacement
+%   text} checks whether the fragile \meta{macro} (defined by |\newcommand| or
+%   |\def|) has the intended \meta{replacement text}.  Otherwise, a warning
+%   message containing the name of the \meta{macro} is printed and the package
+%   loading is aborted.
+%    \begin{macrocode}
 \cs_new_protected_nopar:Nn \longarrows_check_fragile_cmd:Nn {
   \longarrows_check_cmd:NNn #1 #1 { #2 }
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\longarrows_check_robust_cmd:Nn}
+%   The macro |\longarrows_check_robust_cmd:Nn|\meta{macro}\marg{replacement
+%   text} checks whether the fragile \meta{macro} (defined by
+%   |\DeclareRobustCommand|) has the intended \meta{replacement text}.
+%   Otherwise, a warning message containing the name of the \meta{macro} is
+%   printed and the package loading is aborted.
+%    \begin{macrocode}
 \cs_new_protected_nopar:Nn \longarrows_check_robust_cmd:Nn {
   \longarrows_check_cmd:NNx #1 #1 {
     \exp_not:N \protect \exp_not:c { \cs_to_str:N #1 ~ }
   }
   \longarrows_check_cmd:cNn { \cs_to_str:N #1 ~ } #1 { #2 }
 }
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
 \longarrows_check_robust_cmd:Nn \joinrel { \mathrel { \mkern -3mu } }
 \@ifpackageloaded { amsmath } {
   \longarrows_check_fragile_cmd:Nn \Relbar
@@ -418,62 +513,92 @@
 % \end{macro}
 %
 % \begin{macro}{\nlongleftarrow}
-% \begin{macro}{\nLongleftarrow}
-% \begin{macro}{\nlongrightarrow}
-% \begin{macro}{\nLongrightarrow}
-% \begin{macro}{\nlongleftrightarrow}
-% \begin{macro}{\nLongleftrightarrow}
 % These definitions are modeled after \pkg{amsmath}, too.
 %    \begin{macrocode}
 \NewDocumentCommand\nlongleftarrow { } {
   \DOTSB \leftarrow \longarrowjoinrel \relbar
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\nLongleftarrow}
+%    \begin{macrocode}
 \NewDocumentCommand \nLongleftarrow { } {
   \DOTSB \Leftarrow \longarrowjoinrel \longarrowRelbar
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\nlongrightarrow}
+%    \begin{macrocode}
 \NewDocumentCommand \nlongrightarrow { } {
   \DOTSB \relbar \longarrowjoinrel \rightarrow
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\nLongrightarrow}
+%    \begin{macrocode}
 \NewDocumentCommand \nLongrightarrow { } {
   \DOTSB \longarrowRelbar \longarrowjoinrel \Rightarrow
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\nlongleftrightarrow}
+%    \begin{macrocode}
 \NewDocumentCommand \nlongleftrightarrow { } {
   \DOTSB \leftarrow \longarrowjoinrel \rightarrow
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\nLongleftrightarrow}
+%    \begin{macrocode}
 \NewDocumentCommand \nLongleftrightarrow { } {
   \DOTSB \Leftarrow \longarrowjoinrel \Rightarrow
 }
 %    \end{macrocode}
 % \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
 %
 % \begin{macro}{\longleftarrow}
-% \begin{macro}{\Longleftarrow}
-% \begin{macro}{\longrightarrow}
-% \begin{macro}{\Longrightarrow}
-% \begin{macro}{\longleftrightarrow}
-% \begin{macro}{\Longleftrightarrow}
 % If overwriting is requested, do it.
 %    \begin{macrocode}
 \bool_if:NT \l_longarrows_overwrite_bool {
   \cs_set_eq:NN \longleftarrow      \nlongleftarrow
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\Longleftarrow}
+%    \begin{macrocode}
   \cs_set_eq:NN \Longleftarrow      \nLongleftarrow
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\longrightarrow}
+%    \begin{macrocode}
   \cs_set_eq:NN \longrightarrow     \nlongrightarrow
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\Longrightarrow}
+%    \begin{macrocode}
   \cs_set_eq:NN \Longrightarrow     \nLongrightarrow
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\longleftrightarrow}
+%    \begin{macrocode}
   \cs_set_eq:NN \longleftrightarrow \nlongleftrightarrow
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\Longleftrightarrow}
+%    \begin{macrocode}
   \cs_set_eq:NN \Longleftrightarrow \nLongleftrightarrow
 }
 %</package>
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
 % \end{macro}
 %
 %
