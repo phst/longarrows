@@ -1,5 +1,5 @@
 % \iffalse meta-comment
-% Copyright (C) 2008, 2010, 2011 by Philipp Stephani <st_philipp@yahoo.de>
+% Copyright (C) 2008, 2010, 2011, 2012 by Philipp Stephani <p.stephani2@gmail.com>
 %
 % This file may be distributed and/or modified under the conditions of the
 % LaTeX Project Public License, either version 1.3c of this license or (at your
@@ -60,13 +60,15 @@
 %
 % \changes{v0.1}{2008/05/04}{Initial version}
 % \changes{v0.2}{2010/09/26}{Various updates}
+% \changes{v0.3}{2012/08/28}{Switched to \pkg{l3docstrip}}
 %
 % \GetFileInfo{longarrows.sty}
 %
 %
-% \title{The \packagename package\thanks{This document corresponds to \packagename \fileversion, dated \filedate.}}
+% \title{The \packagename package\thanks{This document corresponds to
+% \packagename \fileversion, dated \filedate.}}
 %
-% \author{Philipp Stephani \\ \texttt{st\_philipp@yahoo.de}}
+% \author{Philipp Stephani \\ \texttt{p.stephani2@gmail.com}}
 %
 % \maketitle
 %
@@ -262,10 +264,11 @@
 % First we load required packages.
 %    \begin{macrocode}
 %<*package>
+%<@@=longarrows>
 \NeedsTeXFormat{LaTeX2e}[2009/09/24]
 \RequirePackage{etex}[1998/03/26]
 \RequirePackage{expl3}[2010/07/13]
-\ProvidesExplPackage{longarrows}{2011/06/13}{0.2}%
+\ProvidesExplPackage{longarrows}{2012/08/28}{0.3}%
   {Better-looking long arrows}
 \RequirePackage{xparse}[2010/05/23]
 \RequirePackage{l3keys2e}[2010/10/13]
@@ -273,12 +276,12 @@
 %
 % \subsubsection{Option processing}
 %
-% \begin{macro}{\l_longarrows_overwrite_bool}
-% \begin{macro}{\l_longarrows_overlap_muskip}
+% \begin{macro}{\l_@@_overwrite_bool}
+% \begin{macro}{\l_@@_overlap_muskip}
 %   Two variables to store package/setup options.
 %    \begin{macrocode}
-\bool_new:N \l_longarrows_overwrite_bool
-\muskip_new:N \l_longarrows_overlap_muskip
+\bool_new:N \l_@@_overwrite_bool
+\muskip_new:N \l_@@_overlap_muskip
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -288,9 +291,9 @@
 %   The two options \opt{overwrite} and \opt{overlap} are declared.
 %    \begin{macrocode}
 \keys_define:nn { longarrows } {
-  overwrite .bool_set:N = \l_longarrows_overwrite_bool,
+  overwrite .bool_set:N = \l_@@_overwrite_bool,
   overlap   .code:n
-    = \muskip_set:Nn \l_longarrows_overlap_muskip { -3mu - #1 }
+    = \muskip_set:Nn \l_@@_overlap_muskip { -3mu - #1 }
 }
 %    \end{macrocode}
 % \end{option}
@@ -312,23 +315,23 @@
 %
 % \subsubsection{Detecting the font in use}
 %
-% We distinguish between Latin Modern and Computer Modern.
-% The actual font declaration is done by the font definition files that get
-% loaded automatically when required.
+% We distinguish between Latin Modern and Computer Modern.  The actual font
+% declaration is done by the font definition files that get loaded
+% automatically when required.
 %
-% \begin{macro}{\l_longarrows_font_tl}
+% \begin{macro}{\l_@@_font_tl}
 %   This token list contains the NFSS\,2 family name of the font to be used
 %   (\fnt{cmrlongarrows} or \fnt{lmrlongarrows})
 %    \begin{macrocode}
-\tl_new:N \l_longarrows_font_tl
+\tl_new:N \l_@@_font_tl
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_longarrows_temp_tl}
+% \begin{macro}{\l_@@_temp_tl}
 %   A temporary token list containing the tokens that make up the font
 %   definition in the math version selector.
 %    \begin{macrocode}
-\tl_new:N \l_longarrows_temp_tl
+\tl_new:N \l_@@_temp_tl
 %    \end{macrocode}
 % \end{macro}
 %
@@ -346,12 +349,12 @@
 % first, then Computer Modern.
 %    \begin{macrocode}
 \clist_map_inline:nn { lmr, cmr } {
-  \tl_set:Nx \l_longarrows_temp_tl {
+  \tl_set:Nx \l_@@_temp_tl {
     \exp_not:n { \getanddefine@fonts \symoperators }
     \exp_not:c { OT1/ #1 /m/n }
   }
-  \tl_if_in:NoT \mv@normal \l_longarrows_temp_tl {
-    \tl_set:Nn \l_longarrows_font_tl { #1 longarrows }
+  \tl_if_in:NoT \mv@normal \l_@@_temp_tl {
+    \tl_set:Nn \l_@@_font_tl { #1 longarrows }
     \clist_map_break:
   }
 }
@@ -364,9 +367,9 @@
 }
 %    \end{macrocode}
 % \end{l3message}
-% If |\l_longarrows_font_tl| is still empty, we abort.
+% If |\l_@@_font_tl| is still empty, we abort.
 %    \begin{macrocode}
-\tl_if_empty:NT \l_longarrows_font_tl {
+\tl_if_empty:NT \l_@@_font_tl {
   \msg_warning:nn { longarrows } { unknown-font }
   \endinput
 }
@@ -395,14 +398,14 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\longarrows_check_cmd:NNn}
-%   The macro |\longarrows_check_cmd:NNn|\meta{actual macro}\meta{visible
+% \begin{macro}{\@@_check_cmd:NNn}
+%   The macro |\@@_check_cmd:NNn|\meta{actual macro}\meta{visible
 %   macro}\marg{replacement text} checks whether the \meta{actual macro} has
 %   the intended \meta{replacement text}.  Otherwise, a warning message
 %   containing the name of the \meta{visible macro} is printed and the package
 %   loading is aborted.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Nn \longarrows_check_cmd:NNn {
+\cs_new_protected_nopar:Nn \@@_check_cmd:NNn {
   \tl_if_eq:onF #1 { #3 } {
     \msg_warning:nnxxx { longarrows } { unknown-def }
       { \token_to_str:N #2 } { \tl_to_str:N #1 } { \tl_to_str:n { #3 } }
@@ -412,83 +415,82 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\longarrows_check_cmd:NNx}
-% \begin{macro}{\longarrows_check_cmd:cNn}
+% \begin{macro}{\@@_check_cmd:NNx}
+% \begin{macro}{\@@_check_cmd:cNn}
 %   We generate a few variants for argument expansion.
 %    \begin{macrocode}
-\cs_generate_variant:Nn \longarrows_check_cmd:NNn { NNx, cNn }
+\cs_generate_variant:Nn \@@_check_cmd:NNn { NNx, cNn }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
 %
-% \begin{macro}{\longarrows_check_fragile_cmd:Nn}
-%   The macro |\longarrows_check_fragile_cmd:Nn|\meta{macro}\marg{replacement
-%   text} checks whether the fragile \meta{macro} (defined by |\newcommand| or
+% \begin{macro}{\@@_check_fragile_cmd:Nn}
+%   The macro |\@@_check_fragile_cmd:Nn|\meta{macro}\marg{replacement text}
+%   checks whether the fragile \meta{macro} (defined by |\newcommand| or
 %   |\def|) has the intended \meta{replacement text}.  Otherwise, a warning
 %   message containing the name of the \meta{macro} is printed and the package
 %   loading is aborted.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Nn \longarrows_check_fragile_cmd:Nn {
-  \longarrows_check_cmd:NNn #1 #1 { #2 }
+\cs_new_protected_nopar:Nn \@@_check_fragile_cmd:Nn {
+  \@@_check_cmd:NNn #1 #1 { #2 }
 }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\longarrows_check_robust_cmd:Nn}
-%   The macro |\longarrows_check_robust_cmd:Nn|\meta{macro}\marg{replacement
-%   text} checks whether the fragile \meta{macro} (defined by
+% \begin{macro}{\@@_check_robust_cmd:Nn}
+%   The macro |\@@_check_robust_cmd:Nn|\meta{macro}\marg{replacement text}
+%   checks whether the fragile \meta{macro} (defined by
 %   |\DeclareRobustCommand|) has the intended \meta{replacement text}.
 %   Otherwise, a warning message containing the name of the \meta{macro} is
 %   printed and the package loading is aborted.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Nn \longarrows_check_robust_cmd:Nn {
-  \longarrows_check_cmd:NNx #1 #1 {
+\cs_new_protected_nopar:Nn \@@_check_robust_cmd:Nn {
+  \@@_check_cmd:NNx #1 #1 {
     \exp_not:N \protect \exp_not:c { \cs_to_str:N #1 ~ }
   }
-  \longarrows_check_cmd:cNn { \cs_to_str:N #1 ~ } #1 { #2 }
+  \@@_check_cmd:cNn { \cs_to_str:N #1 ~ } #1 { #2 }
 }
 %    \end{macrocode}
 % \end{macro}
 %
 %    \begin{macrocode}
-\longarrows_check_robust_cmd:Nn \joinrel { \mathrel { \mkern -3mu } }
+\@@_check_robust_cmd:Nn \joinrel { \mathrel { \mkern -3mu } }
 \@ifpackageloaded { amsmath } {
-  \longarrows_check_fragile_cmd:Nn \Relbar
+  \@@_check_fragile_cmd:Nn \Relbar
     { \mathrel \std@equal }
-  \longarrows_check_fragile_cmd:Nn \longleftarrow
+  \@@_check_fragile_cmd:Nn \longleftarrow
     { \DOTSB \leftarrow \protect \joinrel \protect \relbar }
-  \longarrows_check_fragile_cmd:Nn \Longleftarrow
+  \@@_check_fragile_cmd:Nn \Longleftarrow
     { \DOTSB \Leftarrow \protect \joinrel \protect \Relbar }
-  \longarrows_check_fragile_cmd:Nn \longrightarrow
+  \@@_check_fragile_cmd:Nn \longrightarrow
     { \DOTSB \protect \relbar \protect \joinrel \rightarrow }
-  \longarrows_check_fragile_cmd:Nn \Longrightarrow
+  \@@_check_fragile_cmd:Nn \Longrightarrow
     { \DOTSB \protect \Relbar \protect \joinrel \Rightarrow }
-  \longarrows_check_fragile_cmd:Nn \longleftrightarrow
+  \@@_check_fragile_cmd:Nn \longleftrightarrow
     { \DOTSB \leftarrow \joinrel \rightarrow }
-  \longarrows_check_fragile_cmd:Nn \Longleftrightarrow
+  \@@_check_fragile_cmd:Nn \Longleftrightarrow
     { \DOTSB \Leftarrow \joinrel \Rightarrow }
 } {
-  \longarrows_check_robust_cmd:Nn \Relbar
+  \@@_check_robust_cmd:Nn \Relbar
     { \mathrel { = } }
-  \longarrows_check_robust_cmd:Nn \longleftarrow
+  \@@_check_robust_cmd:Nn \longleftarrow
     { \leftarrow \joinrel \relbar }
-  \longarrows_check_robust_cmd:Nn \Longleftarrow
+  \@@_check_robust_cmd:Nn \Longleftarrow
     { \Leftarrow \joinrel \Relbar } 
-  \longarrows_check_robust_cmd:Nn \longrightarrow
+  \@@_check_robust_cmd:Nn \longrightarrow
     { \relbar\joinrel\rightarrow }
-  \longarrows_check_robust_cmd:Nn \Longrightarrow
+  \@@_check_robust_cmd:Nn \Longrightarrow
     { \Relbar \joinrel \Rightarrow }
-  \longarrows_check_robust_cmd:Nn \longleftrightarrow
+  \@@_check_robust_cmd:Nn \longleftrightarrow
     { \leftarrow \joinrel \rightarrow }
-  \longarrows_check_robust_cmd:Nn \Longleftrightarrow
+  \@@_check_robust_cmd:Nn \Longleftrightarrow
     { \Leftarrow \joinrel \Rightarrow }
 %    \end{macrocode}
 % \begin{macro}{\DOTSB}
-% We take the case that \pkg{amsmath} is not loaded into account.
-% All macros except \cmd{\DOTSB} exist in standard \LaTeX, so we assign
-% \cmd{\DOTSB} only if it is not already assigned.
-% \cmd{\DOTSB} has no real meaning; it is just used as a marker in
-% \pkg{amsmath}.
+%   We take the case that \pkg{amsmath} is not loaded into account.  All macros
+%   except \cmd{\DOTSB} exist in standard \LaTeX, so we assign \cmd{\DOTSB}
+%   only if it is not already assigned.  \cmd{\DOTSB} has no real meaning; it
+%   is just used as a marker in \pkg{amsmath}.
 %    \begin{macrocode}
   \cs_new_eq:NN \DOTSB \scan_stop:
 }
@@ -496,28 +498,26 @@
 % \end{macro}
 %
 % Now we use \cmd{\DeclareSymbolFont} to either declare or overwrite the symbol
-% font.
-% We also set parameters for the bold version.
+% font.  We also set parameters for the bold version.
 %    \begin{macrocode}
 \DeclareSymbolFont { longarrows }          { OT1 }
-  { \l_longarrows_font_tl } { m  } { n }
+  { \l_@@_font_tl } { m  } { n }
 \SetSymbolFont     { longarrows } { bold } { OT1 }
-  { \l_longarrows_font_tl } { bx } { n }
+  { \l_@@_font_tl } { bx } { n }
 %    \end{macrocode}
 %
 % \begin{macro}{\longarrowjoinrel}
 % This is like \LaTeXe's \cmd{\joinrel}.
 %    \begin{macrocode}
 \NewDocumentCommand \longarrowjoinrel { } {
-  \mathrel { \mkern \l_longarrows_overlap_muskip }
+  \mathrel { \mkern \l_@@_overlap_muskip }
 }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\longarrowRelbar}
-% This symbol is used as arrow extender.
-% The definition here is actually simpler than the one in \pkg{amsmath}, but
-% should suffice for our purposes.
+%   This symbol is used as arrow extender.  The definition here is actually
+%   simpler than the one in \pkg{amsmath}, but should suffice for our purposes.
 %    \begin{macrocode}
 \chk_if_free_cs:N \longarrowRelbar
 \DeclareMathSymbol
@@ -526,7 +526,7 @@
 % \end{macro}
 %
 % \begin{macro}{\nlongleftarrow}
-% These definitions are modeled after \pkg{amsmath}, too.
+%   These definitions are modeled after \pkg{amsmath}, too.
 %    \begin{macrocode}
 \NewDocumentCommand \nlongleftarrow { } {
   \DOTSB \leftarrow \longarrowjoinrel \relbar
@@ -577,7 +577,7 @@
 % \begin{macro}{\longleftarrow}
 % If overwriting is requested, do it.
 %    \begin{macrocode}
-\bool_if:NT \l_longarrows_overwrite_bool {
+\bool_if:NT \l_@@_overwrite_bool {
   \cs_set_eq:NN \longleftarrow      \nlongleftarrow
 %    \end{macrocode}
 % \end{macro}
@@ -617,9 +617,9 @@
 %
 % \subsection{Font definition files}
 %
-% This is the font definition for the scaled version of \fnt{cmr}.
-% We use the same sizes and creation functions as \fnt{cmsy}.
-% Note that this does not take into account the changes made by \pkg{fix-cm}.
+% This is the font definition for the scaled version of \fnt{cmr}.  We use the
+% same sizes and creation functions as \fnt{cmsy}.  Note that this does not
+% take into account the changes made by \pkg{fix-cm}.
 %    \begin{macrocode}
 %<*cmfont>
 \ProvidesFile{ot1cmrlongarrows.fd}%
@@ -636,8 +636,8 @@
 %</cmfont>
 %    \end{macrocode}
 %
-% This is the font definition for the scaled version of \fnt{lmr}.
-% We use the same sizes and creation functions as \fnt{lmsy}.
+% This is the font definition for the scaled version of \fnt{lmr}.  We use the
+% same sizes and creation functions as \fnt{lmsy}.
 %    \begin{macrocode}
 %<*lmfont>
 \ProvidesFile{ot1lmrlongarrows.fd}%
